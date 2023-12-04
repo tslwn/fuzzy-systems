@@ -1,0 +1,285 @@
+\renewcommand{\thesection}{Q\arabic{section}}
+
+\section{Fuzzy control and sound synthesis}
+
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{subsection}}
+
+\subsection{Introduction}
+\label{q1:introduction}
+
+Natural and artificial systems are frequently complex, non-linear, and operate under
+variable conditions.
+Accordingly, approaches to modelling and controlling these systems must be designed to
+approximate non-linear functions and handle uncertainty.
+Fuzzy systems and neural networks are different, and sometimes complementary,
+approaches to modelling and control.
+The learned parameters of neural networks are often difficult to interpret, and their
+behaviours are difficult to explain.
+By contrast, fuzzy systems can learn linguistically interpretable rules that can be
+verified by humans, or explicitly encode human knowledge \parencite[1593]{Babuska1996}.
+Interpretability and explainability are central concerns in artificial-intelligence
+research \parencite[e.g.][]{Gilpin2018}, particularly in its applications to
+risk-averse domains, such as healthcare, robotics, and industrial processes.
+Additionally, in creative applications, the ability to encode human knowledge and
+define novel behaviours is a desirable feature of fuzzy approaches.
+In this essay, I provide a brief overview of fuzzy control systems in
+\cref{q1:fuzzy-control} and an example of its application to sound synthesis in
+\cref{q1:sound-synthesis}.
+Finally, I contrast this case study with neural-network approaches in
+\cref{q1:neural-networks}.
+
+\subsection{Fuzzy control}
+\label{q1:fuzzy-control}
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[inner sep=0.15in, node distance=0.5in, line width=0.01in]
+    % Object
+    \node[draw] (obje) {Object};
+
+    \node[above=of obje] (ext) {};
+    \draw[-Latex] (ext) -- (obje);
+
+    \node[coordinate, right=0.25in of obje] (outa) {};
+    \node[coordinate, right=0.25in of outa] (outb) {};
+    \draw[-] (obje) -- (outa);
+    \draw[-Latex] (outa) -- (outb);
+
+    % Controller
+    \node[draw, left=1.25in of obje] (ctrl) {Controller};
+    \draw[-Latex] (ctrl) -- node[above] {Actions} (obje);
+
+    \node[coordinate, left=of ctrl] (refe) {};
+    \draw[-Latex] (refe) -- (ctrl);
+
+    % Sensor
+    \node[draw, below left=0.375in and 0in of obje] (sens) {Sensor};
+    \draw[-Latex] (outa) |- (sens);
+    \draw[-Latex] (sens) -| node[below] {Conditions} (ctrl);
+
+    \node[below=of sens] (nois) {};
+    \draw[-Latex] (nois) -- (sens);
+  \end{tikzpicture}
+  \caption{A basic feedback control system \parencite[27]{Doyle1990}.}
+  \label{fig:feedback-control}
+\end{figure}
+
+Since Zadeh's introduction of fuzzy sets \parencite*{Zadeh1965}, fuzzy logic has been
+widely applied to control systems \parencite[330]{Klir1995}.
+A basic feedback control system comprises a controlled object, sensors that measure the
+conditions of the object, and a controller that generates actions to apply to it
+\parencite[27]{Doyle1990}.
+The controller applies inference rules to the conditions to generate actions.
+A schematic of this arrangement is given in \cref{fig:feedback-control}.
+Generally, sensors produce crisp measurement values and actuators apply actions that
+are defined by crisp values.
+Hence, to apply fuzzy inference rules, a fuzzy controller:
+\begin{enumerate}
+  \item fuzzifies the conditions of the object, i.e., converts them to fuzzy sets;
+  \item applies fuzzy inference rules to the fuzzified conditions; and
+  \item defuzzifies the outputs of the inference rules, i.e., converts them to crisp
+        values.
+\end{enumerate}
+This procedure is depicted in \cref{fig:fuzzy-control}, after
+\textcite[331-332]{Klir1995}.
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[inner sep=0.15in, line width=0.01in]
+    % Object
+    \node[draw] (obje) {Object};
+
+    % Fuzzification
+    \node[draw, minimum width=1.5in, below right=0.375in and 0.5in of obje] (fuzz) {Fuzzification};
+    \draw[-Latex] (obje) |- node[below] {Conditions} (fuzz);
+
+    % Defuzzification
+    \node[draw, minimum width=1.5in, above right=0.375in and 0.5in of obje] (defu) {Defuzzification};
+    \draw[-Latex] (defu) -| node[above] {Actions} (obje);
+
+    % Inference
+    \node[draw, right=2in of obje] (infe) {Inference rules};
+    \draw[-Latex] (fuzz) -| (infe);
+    \draw[-Latex] (infe) |- (defu);
+
+    % Controller
+    \node[draw, dashed, inner sep=0.25in, label=above:Fuzzy controller, fit=(defu) (fuzz) (defu) (infe)] {};
+  \end{tikzpicture}
+  \caption{A fuzzy control system \parencite[331-332]{Klir1995}.}
+  \label{fig:fuzzy-control}
+\end{figure}
+
+\subsubsection{Fuzzification}
+\label{q1:fuzzification}
+
+In a fuzzy system, variables are described by fuzzy sets \parencite[327]{Klir1995}.
+To convert a crisp value to a fuzzy set, the `universe of discourse' of the variable,
+i.e., the range of values it takes, and the semantics of the fuzzy set that describes
+it, i.e., its membership function, must be defined \parencite[60]{Sugeno1985}.
+For example, instead of a crisp value of $60\,\text{dB}$, the amplitude of a sound may
+be expressed in terms of the membership values of the elements of a fuzzy set
+$\{\text{low}, \text{medium}, \text{high}\}$.
+In this way, a fuzzy representation of a variable can account for the inherent
+uncertainty of measurement values and the limited resolution of measurement
+instruments, and present a more intuitive description to human designers and operators.
+
+\subsubsection{Inference}
+\label{q1:inference}
+
+Zadeh later presented an approach to fuzzy system modelling based on \emph{linguistic
+  variables}, i.e., variables whose values are expressions in a natural or artificial
+language \parencite*[199]{Zadeh1975}.
+As above, the amplitude of a sound event could be described as `low', `medium', or
+`high' instead of a crisp value in decibels.
+\textcite{Mamdani1975} were the first to apply this approach to control systems.
+In this scheme, the inference rules of a control system are \emph{if-then} statements
+whose premises and consequences are expressed in terms of linguistic variables
+\parencite[57-58]{Nguyen2019}.
+For example, the application of the rule `\emph{if} the amplitude is low \emph{then}
+increase the amplitude' to a sound event whose amplitude is `low' may produce an event
+whose amplitude is `medium'.
+An \emph{if-then} statement is an example of \emph{modus ponens}, an argumentative form
+in propositional logic -- Zadeh's approach is thus sometimes called generalized modus
+ponens \parencite[e.g.][]{Dubois1984}.
+
+A key advantage of this type of system is that it is generally easier for humans to
+formulate inference rules in linguistic terms than in mathematical terms, which helps
+to encode expert knowledge in the system and to understand its behaviour.
+On the other hand, Mamdani controllers do not construct an explicit model of the
+controlled process, which makes it difficult to analyse its stability
+\parencite[58]{Nguyen2019}.
+Stability analysis is an important aspect of the design of control systems, which are
+frequently used to maintain an equilibrium state \parencite[3]{Doyle1990}.
+
+However, not all fuzzy control systems are based on linguistic variables.
+Accordingly, \textcite{Sugeno1985} classifies fuzzy systems according to the form of
+the consequences of their inference rules (\cref{tab:types-of-fuzzy-systems}).
+For example, Takagi-Sugeno controllers map input values to (usually) linear functions
+\parencites{Takagi1985}[58-59]{Nguyen2019}.
+This approach is particularly useful for modelling non-linear systems, but sacrifices
+the interpretability of linguistic variables in its outputs.
+\textcite{Nguyen2017} presents a third type of fuzzy system, in which the consequences
+of the inference rules are real numbers.
+These `singleton' or piecewise multi-affine systems are computationally inexpensive and
+amenable to stability analysis \parencite[63-64]{Nguyen2019}.
+
+\begin{table}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    Type          & Consequences       & Reference
+    \\
+    \midrule
+    Mamdani       & fuzzy sets         & \textcite{Mamdani1975}
+    \\
+    Takagi-Sugeno & (linear) functions & \textcite{Takagi1985}
+    \\
+    Singleton     & real numbers       & \textcite{Nguyen2017}
+    \\
+    \bottomrule
+  \end{tabular}
+  \caption{Types of fuzzy systems \parencite{Nguyen2019}.}
+  \label{tab:types-of-fuzzy-systems}
+\end{table}
+
+\subsubsection{Defuzzification}
+\label{q1:defuzzification}
+
+The output fuzzy sets of a fuzzy controller must be converted to crisp values to be
+applied to the controlled object.
+Generally, approaches to defuzzification are based on either the maxima of the
+membership function of the fuzzy set, its distribution, or the area under its curve,
+depending on the type of the variable \parencite[166-172]{Leekwijck1999}.
+The first two of these approaches are illustrated by
+definitions~\ref{def:random-choice-of-maxima} and \ref{def:centre-of-gravity}, in which
+$\tilde{A}$ is a fuzzy set with membership function $\chi_A : W \to \left[0, 1\right]$.
+
+\begin{definition}
+  \label{def:random-choice-of-maxima}
+  A \emph{random choice of maxima} is the result of an experiment with the
+  probability distribution:
+  \begin{equation}
+    P(x) =
+    \begin{cases}
+      \lvert \text{core}(\tilde{A}) \rvert^{-1} & \text{if } x \in \text{core}(\tilde{A})
+      \\
+      0                                         & \text{otherwise}
+    \end{cases}
+    \ ,\quad
+    \text{core}(\tilde{A}) = \left\{x \in W \mid \chi_A(x) = \max_{y \in W} \chi_A(y)\right\}
+  \end{equation}
+\end{definition}
+
+\begin{definition}
+  \label{def:centre-of-gravity}
+  The \emph{centre of gravity} of $\tilde{A}$ is:
+  \begin{equation}
+    \text{cog}(\tilde{A}) = \frac{\sum_{x \in W} x \cdot \chi_A(x)}{\sum_{x \in W} \chi_A(x)}.
+  \end{equation}
+  If $\chi_A$ is a probability distribution, then the centre of gravity is equivalent to
+  the expected value of the random variable $X \in W$ where $P(x) = \chi_A(x)$.
+\end{definition}
+
+\subsection{Case study: sound synthesis}
+\label{q1:sound-synthesis}
+
+The opportunity for humans to define the inference rules that operate a control system
+has clear benefits for creative applications.
+As \textcite[1-2]{Cadiz2020} explains, musical concepts are frequently imprecise, such
+as the directives of tempo and dynamics in a musical score.
+Furthermore, non-linearity and the complex interplay of components are desirable
+characteristics of music-making systems.\footnote{For example, the musician and
+  synthesizer designer Vlad Kreimer cites these characteristics as key principles of his
+  design philosophy \parencite{mylarmelodies2023}.
+}
+A promising creative application of fuzzy systems is sound synthesis, i.e., the
+computer-based generation of sound, which is surveyed by \textcite{dePoli1983}.
+In general, a synthesis algorithm involves many parameters, whose values must be
+manually programmed or otherwise controlled to produce a desired sound.
+Parametric control is thus an important aspect of electronic composition, performance,
+and sound design.
+
+\textcite{Cadiz2020} describes an application of fuzzy control to
+parametric control of granular synthesis.
+A granular synthesis algorithm generates sound from many very short sound events or
+`grains' \parencite{Roads1988}, taking inspiration from physics \parencite{Gabor1946}.
+It is particularly amenable to novel control methods due to the large number of input
+parameters and the opacity of their relations to the output sound
+\parencite[11]{Cadiz2020}.
+In this instance, the controlled object is a \texttt{Max/MSP}\footnote{See
+  \href{https://cycling74.com/products/max}{\texttt{https://cycling74.com/products/max}}
+  or \textcite{Manzo2011}, for example.
+} object
+with five parameters that are varied by the control system.
+The evolution of these parameters over time according to fuzzy inference rules
+generates complex time-series from a comparably small number of user inputs.
+Naturally, this methodology can be applied to control other synthesis algorithms
+\parencite[e.g.][]{Cadiz2018} and software environments.
+
+\subsection{Neural networks}
+\label{q1:neural-networks}
+
+Various authors have advocated for fuzzy set theory in the context of control systems
+and artificial intelligence, as opposed to probability and statistics, due to its
+ability to explicitly represent different kinds of uncertainty
+\parencite[249]{Laviolette1995}.
+Neural networks are probabilistic models that are commonly used to approximate
+non-linear functions by learning from data.
+In contrast to \cref{q1:sound-synthesis}, for instance, \textcite{Bitton2020} describe
+a granular sound synthesis technique based on a generative neural network.
+In this case, the properties of the grains are represented by a latent space, which is
+learned by a variational auto-encoder, and the network generates the waveform directly,
+instead of controlling a synthesis algorithm.
+This approach does not allow for the explicit definition of inference rules, but it can
+learn to generate waveforms that are similar to a corpus of audio.
+Closer parallels to the work of \textcite{Cadiz2020} are provided by
+\textcite{Fiebrink2009}, who presented a system to learn mappings between user inputs
+and algorithm parameters, and \textcite{Jonason2020}, who presented a similar
+`control-synthesis' approach to transforming user inputs, based on a recurrent neural
+network.
+Thus, the principal difference between neural-network and fuzzy approaches to control
+systems in this context is whether the inference rules are explicitly defined by the
+user or learned from data.
+Generally, however, fuzzy inference rules can also be constructed from data, including
+by the use of a neural network \parencite[281,295-296]{Klir1995}.

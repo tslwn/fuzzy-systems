@@ -1,0 +1,179 @@
+
+\section{Fuzzy sets in Python}
+\label{q2}
+
+This section explains the Python code that I wrote to complete the questions posed, and
+specific test cases that I wrote to verify its correctness.
+The code is reproduced in \cref{q2:code} and available at
+\github{https://github.com/tslwn/fuzzy-systems}{tslwn/fuzzy-systems}.
+I wrote the code in Python 3.12, to take advantage of the type-annotation syntax for
+generic classes and functions.\footnote{See
+  \hreftt{https://docs.python.org/3.12/whatsnew/3.12.html\#pep-695-type-parameter-syntax}.}
+I completed the majority of the questions by writing methods of a \texttt{FuzzySet}
+class, shown in lines 14-160, which implements the built-in abstract \texttt{Set}
+class.
+
+\subsection{From fuzzy sets to $\alpha$-cuts}
+\label{q2:a}
+
+The aim of this question is to compute the $\alpha$-cuts of a discrete fuzzy set with a
+finite number of elements.
+The corresponding Python code is shown in lines 46-82 of \nameref{q2:main}.
+The \texttt{FuzzySet} method \texttt{alpha\_cut} returns the set of elements of the
+fuzzy set whose membership values are greater than or equal to the given
+$\alpha$-value.
+Then, the method \texttt{alpha\_cuts} iterates over pairs of membership values, with
+the addition of zero, sorted in increasing order of value.
+It returns a dictionary whose keys are the sets of elements and whose values are the
+corresponding intervals of $\alpha$-values.
+Two test cases that apply to fuzzy sets of at least ten elements with non-zero
+membership values are shown in lines 62-86 of \nameref{q2:test}.
+The second test case applies to the fuzzy set shown in lines 17-30, whose $\alpha$-cuts
+are shown in lines 76-86.
+The corresponding equations are:
+\begin{equation}
+  \tilde{A} = 1/0.1 + 2/0.1 + 3/0.3 + 4/0.3 + 5/0.5 + 6/0.5 + 7/0.7 + 8/0.7 + 9/0.9 + 10/0.9 + 11/1
+\end{equation}
+\begin{equation}
+  \tilde{A}_\alpha =
+  \begin{cases}
+    \ \{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11\} : \alpha \in (0, 0.1]
+    \\
+    \ \{3, 4, 5, 6, 7, 8, 9, 10, 11\}       : \alpha \in (0.1, 0.3]
+    \\
+    \ \{5, 6, 7, 8, 9, 10, 11\}             : \alpha \in (0.3, 0.5]
+    \\
+    \ \{7, 8, 9, 10, 11\}                   : \alpha \in (0.5, 0.7]
+    \\
+    \ \{9, 10, 11\}                         : \alpha \in (0.7, 0.9]
+    \\
+    \ \{11\}                                : \alpha \in (0.9, 1]
+    \\
+  \end{cases}
+\end{equation}
+A third test case corresponds to Example 5.3.2 from the lecture notes, shown in lines
+88-96.
+
+\subsection{From $\alpha$-cuts to fuzzy sets}
+\label{q2:b}
+
+The aim of this question is to compute the discrete fuzzy set that corresponds to the
+given $\alpha$-cuts.
+The corresponding Python code is shown in lines 84-103 of \nameref{q2:main}.
+The static \texttt{FuzzySet} method \texttt{from\_alpha\_cuts} iterates over the given
+dictionary, whose keys are the sets of elements and whose values are the corresponding
+intervals of $\alpha$-values, as in Q2(a).
+It returns a fuzzy set whose elements are the unique elements of the keys of the
+dictionary and whose membership values are the maximum $\alpha$-values of the
+corresponding intervals.
+Its consistency with the code that corresponds to Q2(a) is verified by the test cases
+shown in lines 98-128 of \nameref{q2:test}, which apply to the same fuzzy sets as the
+test cases shown in lines 62-86.
+The third case corresponds to Example 5.3.3 from the lecture notes, shown in lines
+130-140.
+
+\subsection{Functions of fuzzy sets}
+\label{q2:c}
+
+The aims of this question are to compute the set $\{f(x) : x \in A\}$, given a function
+$f : \mathbb{R} \to \mathbb{R}$ and a set of real numbers $A$, and to use this to
+compute $f(\tilde{A})$ by the $\alpha$-cut method.
+The corresponding Python code for the first of these aims is shown in lines 192-214 of
+\nameref{q2:main}.
+The function \texttt{apply\_elementwise} returns a set whose elements are the results
+of applying the function $f$ to the elements of the set $A$.
+Two test cases that apply this function with $f(x) = x^2$ (one-to-one) and $f(x) =
+  \lfloor\frac{x}{2}\rfloor$ (many-to-one) are shown in lines 211-217 of
+\nameref{q2:test}.
+
+The corresponding Python code for the second of these aims is shown in lines 105-135
+and 163-189 of \nameref{q2:main}.
+The \texttt{FuzzySet} method \texttt{apply\_elementwise} iterates over the
+$\alpha$-cuts of the fuzzy set $\tilde{A}$, as in Q2(a), and applies the function $f$
+to the set of elements of each $\alpha$-cut with the Python function
+\texttt{apply\_elementwise}, described above.
+Then, the function \texttt{merge\_alpha\_cuts} merges the result by taking the union of
+the intervals of $\alpha$-cuts that correspond to the same set of elements.
+Finally, the static method \texttt{from\_alpha\_cuts} is applied to the result to
+return the fuzzy set $f(\tilde{A})$.
+Two test cases that apply to the functions $f$ defined above are shown in lines 142-185
+of \nameref{q2:test}.
+A third test case corresponds to Example 5.4.2 from the lecture notes, shown in lines
+187-199.
+
+\subsection{Conditional probability distributions}
+\label{q2:d}
+
+The aim of this question is to compute the conditional probability distribution $P(w
+  \mid \tilde{A})$, defined as follows.
+Let $P~:~2^W~\to~[0, 1]$ be a probability distribution and $\tilde{A}$ be a fuzzy set
+characterized by a membership function $\chi_{\tilde{A}}~:~W~\to~[0, 1]$.
+Then, for all $w \in W$:
+\begin{align}
+  \label{q2:cond-prob-dist-1}
+  P(w \mid \tilde{A}) & = \int_0^1 P(w \mid \tilde{A}_\alpha) \, \text{d}\alpha
+  \\[2ex]
+  \label{q2:cond-prob-dist-2}
+                      & =
+  \int_0^1 \frac{P(w \cap \tilde{A}_\alpha)}{P(\tilde{A}_\alpha)} \, \text{d}\alpha\
+  ,\quad P(w \cap \tilde{A}_\alpha) =
+  \begin{cases}
+    P(w) & \text{if}\ w \in \tilde{A}_\alpha
+    \\
+    0    & \text{otherwise}
+  \end{cases}
+\end{align}
+The corresponding Python code is shown in lines 215-291 and 137-160 of
+\nameref{q2:main}.
+The integral is performed by the \texttt{FuzzySet} method \texttt{apply\_numeric}
+(lines 137-160), which takes a function $f~:~2^W~\to~\mathbb{R}$.
+It iterates over the $\alpha$-cuts of the fuzzy set $\tilde{A}$, applies the function
+$f$ to the set of elements of each $\alpha$-cut, multiplies them by the size of the
+corresponding $\alpha$-value interval, and sums the results.
+A test case that corresponds to Example 5.4.1 from the lecture notes is shown in lines
+201-208 of \nameref{q2:test}.
+
+The function \texttt{fuzzy\_cond\_prob\_dist} completes the computation.
+First, it defines a function that returns the conditional probability of a possible
+world given a proposition, i.e., \cref{q2:cond-prob-dist-2}, by dividing the
+probability of the intersection of the proposition and the possible world by the
+probability of the proposition, shown in lines 265-287 of \nameref{q2:main}.
+Then, for each possible world $w \in W$, it applies this function to the fuzzy
+proposition $\tilde{A}$ by the \texttt{apply\_numeric} method, described above, to
+compute the conditional probability distribution $P(w \mid \tilde{A})$.
+This is shown in lines 289-291.
+
+\begin{samepage}
+  Test cases are shown in lines 220-315 of \nameref{q2:test}.
+  In order to correspond to \cref{q2:cond-prob-dist-1}, $P$ and $\tilde{A}$ must be
+  defined for the same, non-empty set of possible worlds (lines 237-273), and $P$ must be
+  a probability distribution (lines 289-301).
+  The other cases demonstrate the circumstances in which $P(w \mid \tilde{A})$ is not well-defined:
+  \begin{itemize}
+    \item If $\tilde{A}_1 = \emptyset$, i.e., the fuzzy proposition does not contain a
+          possible world with membership value~$1$, then the result is not a probability
+          distribution because it does not sum to~$1$ (lines 275-287).
+    \item If $\exists\ \alpha : P(w \mid \tilde{A}_\alpha) = 0$,
+          i.e., the sum of the probabilities of the possible worlds in an $\alpha$-cut is
+          zero, then the result is undefined because it contains a division by zero
+          (lines 303-315).
+  \end{itemize}
+\end{samepage}
+
+In Dempster-Shafer theory, the posterior probability distribution $P(A \mid m)$ is
+defined as follows.
+Let $P : W \to [0, 1]$ be a probability distribution, $m : 2^W \to [0, 1]$ be a mass
+function, and $A$ and $B$ be propositions.
+Then, for all $A \subseteq W$:
+\begin{align}
+  \label{q2:dempster-shafer-1}
+  P(A \mid m)                  & = \sum_{B \subseteq W} P(A \mid B)\ m(B)
+  \\[2ex]
+  \label{q2:dempster-shafer-2} & = \sum_{B \subseteq W} \frac{P(A \cap B)}{P(B)}\ m(B)
+\end{align}
+Hence, the conditional probability distribution $P(w \mid \tilde{A})$ is a
+special case of the posterior probability distribution $P(A \mid m)$, where $A$ is a
+singleton set, and $m$ is a mass function that assigns, for each $\alpha$-cut of
+$\tilde{A}$, a mass of the size of the corresponding $\alpha$-value interval to the set
+of elements of the $\alpha$-cut, and zero mass to all other propositions $B \subseteq
+  W$.

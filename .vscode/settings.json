@@ -1,0 +1,47 @@
+{
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.rulers": [74]
+  },
+  "black-formatter.args": ["--line-length", "74"],
+  "files.exclude": {
+    "**/*-blx.bib": true,
+    "**/*.aux": true,
+    "**/*.bbl": true,
+    "**/*.bcf": true,
+    "**/*.blg": true,
+    "**/*.fdb_latexmk": true,
+    "**/*.fls": true,
+    "**/*.idx": true,
+    "**/*.ilg": true,
+    "**/*.ind": true,
+    "**/*.loe": true,
+    "**/*.log": true,
+    "**/*.nav": true,
+    "**/*.out": true,
+    "**/*.run.xml": true,
+    "**/*.snm": true,
+    "**/*.synctex(busy)": true,
+    "**/*.synctex.gz": true,
+    "**/*.toc": true,
+    "**/*.xdv": true,
+    "**/.pytest_cache": true,
+    "**/__pycache__": true
+  },
+  "isort.args": ["--profile", "black"],
+  "latex-workshop.latexindent.args": [
+    "-c",
+    "%DIR%/",
+    "%TMPFILE%",
+    "-l=%WORKSPACE_FOLDER%/latexindent.yaml",
+    "-m"
+  ],
+  "latex-workshop.texcount.args": ["-merge %DOC%"],
+  "python.analysis.typeCheckingMode": "strict",
+  "python.defaultInterpreterPath": "${env:HOME}/miniconda3/envs/fuzzy-systems",
+  "python.terminal.activateEnvironment": true
+}

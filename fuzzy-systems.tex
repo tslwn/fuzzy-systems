@@ -1,0 +1,48 @@
+\documentclass[11pt]{extarticle}
+\usepackage{fuzzy-systems}
+
+\begin{document}
+
+\newcommand{\authortext}{Tim Lawson}
+\newcommand{\titletext}{An Investigation into Fuzzy Systems}
+
+\fancyhf{}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyhead[R]{\authortext}
+\fancyfoot[C]{\thepage}
+
+\title{\titletext}
+\author[]{\authortext}
+\affil[]{University of Bristol}
+\affil[]{\texttt{tim.lawson@bristol.ac.uk}}
+\date{}
+
+\maketitle
+
+\import{}{q1}
+
+\printbibliography
+
+\newpage
+
+\renewcommand{\thesection}{Q\arabic{section}}
+\renewcommand{\thesubsection}{\thesection (\alph{subsection})}
+
+\import{}{q2}
+
+\appendix
+
+\section{Python code}
+\label{q2:code}
+
+\subsection*{\texttt{main.py}}
+\label{q2:main}
+\lstinputlisting[language=Python]{main.py}
+
+\newpage
+
+\subsection*{\texttt{main\_test.py}}
+\label{q2:test}
+\lstinputlisting[language=Python]{main_test.py}
+
+\end{document}

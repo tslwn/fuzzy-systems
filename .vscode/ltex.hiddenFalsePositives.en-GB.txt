@@ -1,0 +1,3 @@
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qmain.py.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qmaintest.py.\\E$"}
+{"rule":"WHITESPACE_RULE","sentence":"^\\Qq1  q2\\E$"}

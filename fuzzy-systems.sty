@@ -1,0 +1,119 @@
+\ProvidesPackage{fuzzy-systems}
+
+% Page layout
+\usepackage{geometry}
+\geometry{
+  a4paper,
+  margin={1in,1in},
+}
+\usepackage{setspace}
+\onehalfspacing
+
+% Typography
+% https://ctan.math.washington.edu/tex-archive/fonts/etbb/doc/ETbb-doc.pdf
+\usepackage[p]{ETbb}
+\usepackage[scaled=.95,type1]{cabin}
+\usepackage[varqu,varl]{zi4}
+\usepackage[T1]{fontenc}
+\usepackage[libertine,vvarbb]{newtxmath}
+\usepackage{microtype}
+\frenchspacing
+
+% Bibliography
+\usepackage[
+  style=authoryear-ibid,
+  maxcitenames=2,
+  doi=false,
+  isbn=false,
+  backend=biber
+]{biblatex}
+
+\addbibresource{~/library.bib}
+
+% Map @misc to @online
+\DeclareSourcemap{
+  \maps[datatype=bibtex, overwrite=true]{
+    \map{
+      \step[typesource=misc, typetarget=online]
+    }
+  }
+}
+
+\AtEveryBibitem{
+  \clearlist{language}
+  \clearfield{month}
+  \clearfield{note}
+  \clearfield{eprint}
+  % Omit "Visited on <date>"
+  \iffieldundef{urlyear}
+  {}
+  {\clearfield{urlyear}}
+}
+
+\usepackage{import}
+
+% References
+\usepackage{bookmark}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\newcommand{\parencref}[1]{(\cref{#1})}
+
+% Theorem environments
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+% Tables
+\usepackage{booktabs}
+
+% Figures
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{fit}
+\usetikzlibrary{positioning}
+
+% Code
+\usepackage{listings}
+\usepackage{xcolor}
+
+% https://www.overleaf.com/learn/latex/Code_listing#Code_styles_and_colours
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+  backgroundcolor=\color{backcolour},
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{magenta},
+  numberstyle=\small\ttfamily\color{codegray},
+  stringstyle=\color{codepurple},
+  basicstyle=\small\ttfamily,
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  keepspaces=true,
+  numbers=left,
+  numbersep=5pt,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2
+}
+\lstset{style=mystyle}
+
+% Authors
+\usepackage{authblk}
+
+% Headers and footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+% GitHub icon
+\usepackage{fontawesome5}
+\makeatletter
+\newcommand{\github}[2]{%
+  \href{#1}{\faGithub~\texttt{#2}}%
+}
+\makeatother
+% URLs
+\newcommand{\hreftt}[1]{\href{#1}{\texttt{#1}}}
