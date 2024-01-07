@@ -14,7 +14,7 @@ at the University of Bristol.
 Create a virtual environment and install Python dependencies:
 
 ```bash
-conda create --name graded python=3.12
+conda create --name fuzzy-systems python=3.12
 conda activate fuzzy-systems
 conda install pip
 pip install -r requirements.txt
