@@ -3,8 +3,8 @@
 % Page layout
 \usepackage{geometry}
 \geometry{
-  a4paper,
-  margin={1in,1in},
+	a4paper,
+	margin={1in,1in},
 }
 \usepackage{setspace}
 \onehalfspacing
@@ -21,11 +21,11 @@
 
 % Bibliography
 \usepackage[
-  style=authoryear-ibid,
-  maxcitenames=2,
-  doi=false,
-  isbn=false,
-  backend=biber
+	style=authoryear-ibid,
+	maxcitenames=2,
+	doi=false,
+	isbn=false,
+	backend=biber
 ]{biblatex}
 
 % \addbibresource{~/library.bib}
@@ -33,25 +33,23 @@
 
 % Map @misc to @online
 \DeclareSourcemap{
-  \maps[datatype=bibtex, overwrite=true]{
-    \map{
-      \step[typesource=misc, typetarget=online]
-    }
-  }
+	\maps[datatype=bibtex, overwrite=true]{
+		\map{
+			\step[typesource=misc, typetarget=online]
+		}
+	}
 }
 
 \AtEveryBibitem{
-  \clearlist{language}
-  \clearfield{month}
-  \clearfield{note}
-  \clearfield{eprint}
-  % Omit "Visited on <date>"
-  \iffieldundef{urlyear}
-  {}
-  {\clearfield{urlyear}}
+	\clearlist{language}
+	\clearfield{month}
+	\clearfield{note}
+	\clearfield{eprint}
+	% Omit "Visited on <date>"
+	\iffieldundef{urlyear}
+	{}
+	{\clearfield{urlyear}}
 }
-
-\usepackage{import}
 
 % References
 \usepackage{bookmark}
@@ -83,22 +81,22 @@
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 \lstdefinestyle{mystyle}{
-  backgroundcolor=\color{backcolour},
-  commentstyle=\color{codegreen},
-  keywordstyle=\color{magenta},
-  numberstyle=\small\ttfamily\color{codegray},
-  stringstyle=\color{codepurple},
-  basicstyle=\small\ttfamily,
-  breakatwhitespace=false,
-  breaklines=true,
-  captionpos=b,
-  keepspaces=true,
-  numbers=left,
-  numbersep=5pt,
-  showspaces=false,
-  showstringspaces=false,
-  showtabs=false,
-  tabsize=2
+	backgroundcolor=\color{backcolour},
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\small\ttfamily\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\small\ttfamily,
+	breakatwhitespace=false,
+	breaklines=true,
+	captionpos=b,
+	keepspaces=true,
+	numbers=left,
+	numbersep=5pt,
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	tabsize=2
 }
 \lstset{style=mystyle}
 
@@ -113,8 +111,9 @@
 \usepackage{fontawesome5}
 \makeatletter
 \newcommand{\github}[2]{%
-  \href{#1}{\faGithub~\texttt{#2}}%
+	\href{#1}{\faGithub~\texttt{#2}}%
 }
 \makeatother
+
 % URLs
 \newcommand{\hreftt}[1]{\href{#1}{\texttt{#1}}}
