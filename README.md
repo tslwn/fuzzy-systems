@@ -1,7 +1,7 @@
 # An Investigation into Fuzzy Systems
 
 This repository holds the code and report written to fulfil the coursework requirements for the unit
-[Uncertainty Modelling in Intelligent Systems](https://www.bris.ac.uk/unit-programme-catalogue/UnitDetails.jsa?ayrCode=23%2F24&unitCode=EMATM1120)
+[Uncertainty Modelling for Intelligent Systems](https://www.bris.ac.uk/unit-programme-catalogue/UnitDetails.jsa?ayrCode=23%2F24&unitCode=EMATM1120)
 at the University of Bristol.
 
 ## Instructions
